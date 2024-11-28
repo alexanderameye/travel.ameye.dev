@@ -15,18 +15,115 @@
       <td colspan="2" rowspan="2" class="width-auto">
         <h1 class="title">
           
-            
-            
-            
-            
-            bulgaria
+            Travel Destinations
           
         </h1>
-        <span class="subtitle">2025</span>
+        <span class="subtitle"></span>
       </td>
     </tr>
   </table>
 
-  <div></div>
+  <div>
+<!-- DESTINATION LIST -->
+<ul>
+  
+  
+    <li>
+      <a href="/travel/2022-london/">2022-london</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2022-reunion/">2022-reunion</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2022-saint-siffret/">2022-saint-siffret</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2023-lisboa/">2023-lisboa</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2023-scotland/">2023-scotland</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2023-toronto/">2023-toronto</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2024-dolomites/">2024-dolomites</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2024-les-arcs/">2024-les-arcs</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2024-saint-siffret/">2024-saint-siffret</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2025-bulgaria/">2025-bulgaria</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2025-hadrian-wall/">2025-hadrian-wall</a>
+    </li>
+  
+    <li>
+      <a href="/travel/2025-japan/">2025-japan</a>
+    </li>
+  
+</ul>
+
+<!-- MAP -->
+<div id="map" style="height: 500px;"></div>
+<script>
+   
+
+
+  const map = L.map('map',
+    {
+        attributionControl: false,
+        zoomControl: true,
+        minZoom: 2.0,
+        maxZoom: 10,
+        scrollWheelZoom: false
+    }).setView([0.0, 0.0], 2);
+
+  const light = 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
+
+  const tiles = L.tileLayer(light, {
+    maxZoom: 10,
+    ext: 'png'
+}).addTo(map);
+
+function style(feature) {
+    return {
+        fillColor: '#4cc779',
+        fillOpacity: 0.8,
+        color: '#000000',
+        opacity: 0.0,
+        weight: 2,
+    }
+}
+
+let xhr = new XMLHttpRequest();
+xhr.open('GET', '../data/ontario.geojson');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.responseType = 'json';
+xhr.onload = function() {
+    if (xhr.status !== 200) return
+
+    const geoJsonLayer = L.geoJson(xhr.response, {style});
+    geoJsonLayer.addTo(map);
+     map.fitBounds(geoJsonLayer.getBounds());
+};
+xhr.send();
+
+
+</script></div>
 </body>
 </html>
