@@ -84,50 +84,88 @@
 
 <!-- MAP -->
 <div id="map" style="height: 500px;"></div>
+
+
 <script>
-   
+  // Initialize the map
+  const map = L.map('map', {
+      attributionControl: false,
+      zoomControl: true,
+      minZoom: 2.0,
+      maxZoom: 10,
+      scrollWheelZoom: false
+  }).setView([0.0, 0.0], 2);
 
-
-  const map = L.map('map',
-    {
-        attributionControl: false,
-        zoomControl: true,
-        minZoom: 2.0,
-        maxZoom: 10,
-        scrollWheelZoom: false
-    }).setView([0.0, 0.0], 2);
-
+  // Add base tiles
   const light = 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
-
   const tiles = L.tileLayer(light, {
-    maxZoom: 10,
-    ext: 'png'
-}).addTo(map);
+      maxZoom: 10,
+      ext: 'png'
+  }).addTo(map);
 
-function style(feature) {
-    return {
-        fillColor: '#4cc779',
-        fillOpacity: 0.8,
-        color: '#000000',
-        opacity: 0.0,
-        weight: 2,
-    }
-}
+  // GeoJSON styling function
+  function style(feature) {
+      return {
+          fillColor: '#4cc779',
+          fillOpacity: 0.8,
+          color: '#000000',
+          opacity: 0.0,
+          weight: 2,
+      };
+  }
 
-let xhr = new XMLHttpRequest();
-xhr.open('GET', '../data/ontario.geojson');
-xhr.setRequestHeader('Content-Type', 'application/json');
-xhr.responseType = 'json';
-xhr.onload = function() {
-    if (xhr.status !== 200) return
+  // List of geoJSON files to load based on the location property
+  const locations = [
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      'ontario',
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      '',
+    
+      'japan',
+    
+  ];
 
-    const geoJsonLayer = L.geoJson(xhr.response, {style});
-    geoJsonLayer.addTo(map);
-     map.fitBounds(geoJsonLayer.getBounds());
-};
-xhr.send();
-
-
-</script></div>
+  // Load and add each GeoJSON file
+  const bounds = [];
+  locations.forEach(location => {
+      fetch(`/data/${location}.geojson`)
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`GeoJSON for ${location} not found.`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              const geoJsonLayer = L.geoJson(data, { style });
+              geoJsonLayer.addTo(map);
+              bounds.push(geoJsonLayer.getBounds());
+              // Adjust the map to fit all layers
+              const combinedBounds = bounds.reduce((acc, cur) => acc.extend(cur), L.latLngBounds());
+              map.fitBounds(combinedBounds);
+          })
+          .catch(error => console.error(error));
+  });
+</script>
+</div>
 </body>
 </html>
